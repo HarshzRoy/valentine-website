@@ -240,6 +240,12 @@ body {
   font-weight: lighter;
 }
 
+.nine .love-message {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-top: 2rem;
+}
+
 #replay {
   z-index: 3;
   cursor: pointer;

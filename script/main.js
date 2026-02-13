@@ -36,6 +36,17 @@ const animationTimeline = () => {
       opacity: 0,
       y: 10,
     })
+    .call(() => {
+      const audio = document.getElementById("audio");
+      if (audio) {
+        audio.muted = false;
+        audio.volume = 1.0;
+        audio.loop = true;
+        audio.play().catch(() => {
+          // Browser autoplay may require user interaction; audio will start after first click.
+        });
+      }
+    })
     .to(".one", 0.7, { opacity: 0, y: 10 }, "+=2.5")
     .to(".two", 0.7, { opacity: 0, y: 10 }, "-=1")
     .from(".three", 0.7, { opacity: 0, y: 10 })
@@ -100,15 +111,6 @@ const animationTimeline = () => {
       { scale: 3.5, opacity: 0, x: 25, y: -25, rotationZ: -45 },
       "-=2"
     )
-    .call(() => {
-      const audio = document.getElementById("audio");
-      if (audio) {
-        audio.muted = false;
-        audio.play().catch(() => {
-          // Browser autoplay can block playback until user interaction.
-        });
-      }
-    })
     .staggerFrom(
       ".wish-hbd span",
       0.7,
@@ -200,3 +202,22 @@ const initializePage = async () => {
 };
 
 initializePage();
+
+// Fallback for strict autoplay policies: start audio on first user interaction
+window.addEventListener(
+  "click",
+  () => {
+    const audio = document.getElementById("audio");
+    if (!audio) return;
+
+    audio.muted = false;
+    audio.volume = 1.0;
+    audio.loop = true;
+    if (audio.paused) {
+      audio.play().catch(() => {
+        // If this still fails, the browser has very strict policies.
+      });
+    }
+  },
+  { once: true }
+);
